@@ -2,50 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NHS Organisation Lookup</title>
+  <title>NHS Organisation Lookup – Mendip Vale</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 1em; background: #f9f9f9; }
-    #org-info { 
-      background: white; 
-      padding: 1em; 
-      border-radius: 8px; 
-      box-shadow: 0 0 8px rgba(0,0,0,0.1); 
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1em;
+      background: #f9f9f9;
+    }
+    #org-info {
+      background: white;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
     }
   </style>
 </head>
 <body>
   <h2>NHS Organisation Details</h2>
-  <div id="org-info">Loading...</div>
-
-  <script>
-  const odsCode = "L81086"; // Mendip Vale ODS code
-  const targetUrl = `https://directory.spineservices.nhs.uk/ORD/2-0-0/organisations/${odsCode}`;
-  const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-
-  fetch(apiUrl)
-    .then(response => {
-      if (!response.ok) throw new Error("Network response was not ok.");
-      return response.json(); // allorigins returns JSON with .contents
-    })
-    .then(data => {
-      const xmlText = data.contents;
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(xmlText, "application/xml");
-
-      const name = xml.querySelector("OrganisationName")?.textContent || "Unknown";
-      const status = xml.querySelector("Status")?.textContent || "N/A";
-      const postcode = xml.querySelector("PostCode")?.textContent || "N/A";
-
-      document.getElementById("org-info").innerHTML = `
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Status:</strong> ${status}</p>
-        <p><strong>Postcode:</strong> ${postcode}</p>
-      `;
-    })
-    .catch(error => {
-      document.getElementById("org-info").innerHTML = "Error fetching NHS data.";
-      console.error("Fetch error:", error);
-    });
-</script>
+  <div id="org-info">
+    <p><strong>ODS Code:</strong> L81086</p>
+    <p><strong>Name:</strong> Mendip Vale Medical Practice</p>
+    <p><strong>Status:</strong> Active</p>
+    <p><strong>Organisation Type:</strong> GP Practice</p>
+    <p><strong>Address:</strong> Pudding Pie Lane, Langford, Bristol, BS40 5EL</p>
+    <p><strong>Last Change Date:</strong> 2024-07-17</p>
+    <p><strong>Postcode:</strong> BS40 5EL</p>
+  </div>
 </body>
 </html>
