@@ -18,32 +18,34 @@
   <div id="org-info">Loading...</div>
 
   <script>
-    const odsCode = "L81086"; // Your ODS code
-    const apiUrl = `https://directory.spineservices.nhs.uk/ORD/2-0-0/organisations/${odsCode}`;
+  const odsCode = "L81086"; // Mendip Vale ODS code
+  const targetUrl = `https://directory.spineservices.nhs.uk/ORD/2-0-0/organisations/${odsCode}`;
+  const apiUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
-    fetch(apiUrl)
-      .then(res => {
-        if (!res.ok) throw new Error(`Network response was not ok: ${res.status}`);
-        return res.text();
-      })
-      .then(xmlText => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, "application/xml");
+  fetch(apiUrl)
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok.");
+      return response.json(); // allorigins returns JSON with .contents
+    })
+    .then(data => {
+      const xmlText = data.contents;
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(xmlText, "application/xml");
 
-        const name = xml.querySelector("OrganisationName")?.textContent || "Unknown";
-        const status = xml.querySelector("Status")?.textContent || "N/A";
-        const postcode = xml.querySelector("PostCode")?.textContent || "N/A";
+      const name = xml.querySelector("OrganisationName")?.textContent || "Unknown";
+      const status = xml.querySelector("Status")?.textContent || "N/A";
+      const postcode = xml.querySelector("PostCode")?.textContent || "N/A";
 
-        document.getElementById("org-info").innerHTML = `
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Status:</strong> ${status}</p>
-          <p><strong>Postcode:</strong> ${postcode}</p>
-        `;
-      })
-      .catch(err => {
-        document.getElementById("org-info").innerHTML = "Error fetching data.";
-        console.error(err);
-      });
-  </script>
+      document.getElementById("org-info").innerHTML = `
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        <p><strong>Postcode:</strong> ${postcode}</p>
+      `;
+    })
+    .catch(error => {
+      document.getElementById("org-info").innerHTML = "Error fetching NHS data.";
+      console.error("Fetch error:", error);
+    });
+</script>
 </body>
 </html>
