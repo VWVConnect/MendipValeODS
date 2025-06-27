@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NHS Organisation Lookup</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1em; background: #f9f9f9; }
+    #org-info { 
+      background: white; 
+      padding: 1em; 
+      border-radius: 8px; 
+      box-shadow: 0 0 8px rgba(0,0,0,0.1); 
+    }
+  </style>
+</head>
+<body>
+  <h2>NHS Organisation Details</h2>
+  <div id="org-info">Loading...</div>
+
+  <script>
+    const odsCode = "L81086"; // Your ODS code
+    const apiUrl = `https://directory.spineservices.nhs.uk/ORD/2-0-0/organisations/${odsCode}`;
+
+    fetch(apiUrl)
+      .then(res => {
+        if (!res.ok) throw new Error(`Network response was not ok: ${res.status}`);
+        return res.text();
+      })
+      .then(xmlText => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, "application/xml");
+
+        const name = xml.querySelector("OrganisationName")?.textContent || "Unknown";
+        const status = xml.querySelector("Status")?.textContent || "N/A";
+        const postcode = xml.querySelector("PostCode")?.textContent || "N/A";
+
+        document.getElementById("org-info").innerHTML = `
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Status:</strong> ${status}</p>
+          <p><strong>Postcode:</strong> ${postcode}</p>
+        `;
+      })
+      .catch(err => {
+        document.getElementById("org-info").innerHTML = "Error fetching data.";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
